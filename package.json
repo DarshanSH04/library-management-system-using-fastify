@@ -1,0 +1,16 @@
+{
+  "name": "library-management-system-using-fastify",
+  "version": "0.1.0",
+  "description": "library-management-system-using-fastify is a reference repo for microservices using Fastify framework of NodeJS.",
+  "main": "index.js",
+  "repository": "https://github.com/DarshanSH04/library-management-system-using-fastify.git",
+  "author": "Darshan <https://github.com/DarshanSH04>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv-safe": "^8.2.0",
+    "fastify": "^3.24.0",
+    "mongoose": "^6.0.13",
+    "path": "^0.12.7",
+    "uuid": "^8.3.2"
+  }
+}
