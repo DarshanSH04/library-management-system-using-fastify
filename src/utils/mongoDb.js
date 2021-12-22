@@ -29,12 +29,12 @@ async function databaseServices(fastify) {
 }
 
 /*Called when shutting down db connection due to signals viz SIGINT */
-const shutdownDbConnection = (fastify) => {
+const shutdownMongoConnection = (fastify) => {
 
     fastify.log.warn('Database connection shutdown process started');
     try {
         mongoose.connection.close();
-        fastify.log.warn('Database connection shutdown succesful');
+        fastify.log.warn('Database connection shutdown successful');
     }
     catch (error) {
         fastify.log.error('Database connection shutdown process failed');
@@ -43,4 +43,4 @@ const shutdownDbConnection = (fastify) => {
 
 }
 
-module.exports = { databaseServices, shutdownDbConnection };
+module.exports = { databaseServices, shutdownMongoConnection };

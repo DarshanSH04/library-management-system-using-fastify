@@ -19,6 +19,9 @@ const fastify = require('fastify')({
 
 module.exports = (
     async () => {
+        signalHandler(fastify);
 
+        fastify.setNotFoundHandler(handlerNotFound);
+        fastify.setErrorHandler(defaultErrorHandler);
     }
 )

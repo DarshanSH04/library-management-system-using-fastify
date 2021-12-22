@@ -1,5 +1,6 @@
 'use strict';
 
+const { shutdownMongoConnection } = require('./mongoDb')
 let fastify;
 
 const signalHandler = (fastifyOriginalObject) => {
@@ -7,12 +8,10 @@ const signalHandler = (fastifyOriginalObject) => {
     fastify = fastifyOriginalObject;
 
     process.on('uncaughtException', uncaughtHandler);
+    process.on('unhandledRejection', uncaughtHandler);
 
-    process.on('uncaughtRejection', uncaughtHandler);
-
-    process.on('SIGINT',);
-
-    process.on('SIGTERM',);
+    process.on('SIGINT', startShutdown);
+    process.on('SIGTERM', startShutdown);
 }
 
 const handlerNotFound = (request, reply) => {
@@ -95,3 +94,33 @@ const defaultErrorHandler = (error, request, reply) => {
         .status(statusCode)
         .send(responseBody)
 }
+
+/*
+ * This function will be called when the NodeJS process receives a signal to be terminated (manually or otherwise)
+ * To make sure that the mongo connection is terminated before the process exits
+ */
+const startShutdown = (signal) => {
+
+    fastify.log.warn(`Received ${signal}. Shutdown sequence initiated ...`);
+    fastify.log.warn('Fastify : SHUTDOWN_STARTED');
+
+    try {
+        fastify.close();
+
+        fastify.log.warn('Fastify : SHUTDOWN_SUCCESSFUL');
+        shutdownMongoConnection(fastify);
+    }
+    catch (error) {
+        fastify.log.error('Fastify : SHUTDOWN_FAILED');
+        fastify.log.error(err);
+    }
+}
+
+const uncaughtHandler = (err) => {
+    fastify.log.error('Uncaught error');
+    fastify.log.error(err);
+    startShutdown(-5);
+    process.exit(-5);
+}
+
+module.exports = { signalHandler, handlerNotFound, defaultErrorHandler, startShutdown, uncaughtHandler }
